@@ -3,8 +3,8 @@ package main
 import (
 	"gwclient/config"
 	"gwclient/messages"
+	"gwclient/requests"
 
-	"fmt"
 	"log"
 	"os"
 )
@@ -12,7 +12,7 @@ import (
 func main() {
 	config, err := config.ParseFromCommandLine()
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		log.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -24,7 +24,16 @@ func main() {
 	log.Printf("\tConcurrency number: %v\n", config.Concurrency)
 	log.Printf("\tUse KeepAlive     : %v\n", config.KeepAlive)
 
-	messages.Generate(&config)
+	msgs := messages.Generate(&config)
+	oks, fails := requests.Send(msgs, &config)
+
+	log.Printf("Successful request: %v\n", oks)
+	log.Printf("Failed request: %v\n", fails)
+
+	if fails != 0 {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
 
 func msgTypeToString(msgType config.MessageType) string {
