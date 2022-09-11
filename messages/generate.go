@@ -4,6 +4,7 @@ import (
 	"gwclient/config"
 
 	"log"
+	"sync"
 	"time"
 )
 
@@ -21,7 +22,6 @@ func Generate(cfg *config.Config) [][][]byte {
 	}
 
 	log.Printf("Done in %v\n", time.Since(start))
-
 	return result
 }
 
@@ -72,16 +72,22 @@ func generateBucket(size uint32, start uint32) []*message {
 func convertToJson(messages [][]*message, targetSize uint16) [][][]byte {
 	result := make([][][]byte, len(messages))
 
+	wg := sync.WaitGroup{}
 	for i, bucket := range messages {
-		result[i] = make([][]byte, len(bucket))
-		for j, message := range bucket {
-			currentSize := message.jsonSize()
-			if currentSize < int(targetSize) {
-				message.increaseSize(uint(targetSize) - uint(currentSize))
+		wg.Add(1)
+		go func(i int, bucket []*message) {
+			defer wg.Done()
+			result[i] = make([][]byte, len(bucket))
+			for j, message := range bucket {
+				currentSize := message.jsonSize()
+				if currentSize < int(targetSize) {
+					message.increaseSize(uint(targetSize) - uint(currentSize))
+				}
+				result[i][j] = message.toJson()
 			}
-			result[i][j] = message.toJson()
-		}
+		}(i, bucket)
 	}
+	wg.Wait()
 
 	return result
 }
