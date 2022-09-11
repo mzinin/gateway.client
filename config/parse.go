@@ -9,7 +9,7 @@ import (
 var (
 	msgType     string
 	msgSize     uint
-	msgNumber   uint
+	requests    uint
 	concurrency uint
 	keepAlive   bool
 	gatewayURL  string
@@ -34,10 +34,10 @@ func ParseFromCommandLine() (Config, error) {
 		result.MessageSize = uint16(msgSize)
 	}
 
-	if msgNumber > 4294967295 {
-		return result, fmt.Errorf("Number of messages in too big (max 4294967295): %d", msgNumber)
+	if requests > 4294967295 {
+		return result, fmt.Errorf("Number of requests in too big (max 4294967295): %d", requests)
 	} else {
-		result.NumberOfMessages = uint32(msgNumber)
+		result.Requests = uint32(requests)
 	}
 
 	if concurrency > 65535 {
@@ -72,8 +72,8 @@ func parseCommandLineKeys() {
 	flag.UintVar(&msgSize, "size", 128, "Message size")
 
 	// number of messages
-	flag.UintVar(&msgNumber, "n", 10000, "Number of requests to perform")
-	flag.UintVar(&msgNumber, "number-of-requests", 10000, "Number of requests to perform")
+	flag.UintVar(&requests, "n", 10000, "Number of requests to perform")
+	flag.UintVar(&requests, "number-of-requests", 10000, "Number of requests to perform")
 
 	// concurrency
 	flag.UintVar(&concurrency, "c", 1, "Number of multiple requests to make at a time")
