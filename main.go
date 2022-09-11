@@ -2,6 +2,7 @@ package main
 
 import (
 	"gwclient/config"
+	"gwclient/messages"
 
 	"fmt"
 	"log"
@@ -22,6 +23,8 @@ func main() {
 	log.Printf("\tNumber of requests: %v\n", config.Requests)
 	log.Printf("\tConcurrency number: %v\n", config.Concurrency)
 	log.Printf("\tUse KeepAlive     : %v\n", config.KeepAlive)
+
+	messages.Generate(&config)
 }
 
 func msgTypeToString(msgType config.MessageType) string {
