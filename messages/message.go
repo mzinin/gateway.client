@@ -5,6 +5,8 @@ import (
 	"log"
 	"reflect"
 	"strconv"
+
+	flatbuffers "github.com/google/flatbuffers/go"
 )
 
 type message struct {
@@ -145,4 +147,99 @@ func (m *message) toJson() []byte {
 
 func (m *message) jsonSize() int {
 	return len(m.toJson())
+}
+
+func (m *message) toFbf() []byte {
+	builder := flatbuffers.NewBuilder(0)
+
+	str0 := builder.CreateString(m.Str0)
+	str1 := builder.CreateString(m.Str1)
+	str2 := builder.CreateString(m.Str2)
+	str3 := builder.CreateString(m.Str3)
+	str4 := builder.CreateString(m.Str4)
+	str5 := builder.CreateString(m.Str5)
+	str6 := builder.CreateString(m.Str6)
+	str7 := builder.CreateString(m.Str7)
+	str8 := builder.CreateString(m.Str8)
+	str9 := builder.CreateString(m.Str9)
+	str10 := builder.CreateString(m.Str10)
+	str11 := builder.CreateString(m.Str11)
+	str12 := builder.CreateString(m.Str12)
+	str13 := builder.CreateString(m.Str13)
+	str14 := builder.CreateString(m.Str14)
+	str15 := builder.CreateString(m.Str15)
+	str16 := builder.CreateString(m.Str16)
+	str17 := builder.CreateString(m.Str17)
+	str18 := builder.CreateString(m.Str18)
+	str19 := builder.CreateString(m.Str19)
+	str20 := builder.CreateString(m.Str20)
+	str21 := builder.CreateString(m.Str21)
+	str22 := builder.CreateString(m.Str22)
+	str23 := builder.CreateString(m.Str23)
+	str24 := builder.CreateString(m.Str24)
+	str25 := builder.CreateString(m.Str25)
+	str26 := builder.CreateString(m.Str26)
+	str27 := builder.CreateString(m.Str27)
+	str28 := builder.CreateString(m.Str28)
+	str29 := builder.CreateString(m.Str29)
+	str30 := builder.CreateString(m.Str30)
+	str31 := builder.CreateString(m.Str31)
+
+	InstrumentStart(builder)
+
+	InstrumentAddInt0(builder, m.Int0)
+	InstrumentAddInt1(builder, m.Int1)
+	InstrumentAddInt2(builder, m.Int2)
+	InstrumentAddInt3(builder, m.Int3)
+	InstrumentAddInt4(builder, m.Int4)
+	InstrumentAddInt5(builder, m.Int5)
+
+	InstrumentAddDouble0(builder, m.Double0)
+	InstrumentAddDouble1(builder, m.Double1)
+	InstrumentAddDouble2(builder, m.Double2)
+	InstrumentAddDouble3(builder, m.Double3)
+	InstrumentAddDouble4(builder, m.Double4)
+	InstrumentAddDouble5(builder, m.Double5)
+
+	InstrumentAddStr0(builder, str0)
+	InstrumentAddStr1(builder, str1)
+	InstrumentAddStr2(builder, str2)
+	InstrumentAddStr3(builder, str3)
+	InstrumentAddStr4(builder, str4)
+	InstrumentAddStr5(builder, str5)
+	InstrumentAddStr6(builder, str6)
+	InstrumentAddStr7(builder, str7)
+	InstrumentAddStr8(builder, str8)
+	InstrumentAddStr9(builder, str9)
+	InstrumentAddStr10(builder, str10)
+	InstrumentAddStr11(builder, str11)
+	InstrumentAddStr12(builder, str12)
+	InstrumentAddStr13(builder, str13)
+	InstrumentAddStr14(builder, str14)
+	InstrumentAddStr15(builder, str15)
+	InstrumentAddStr16(builder, str16)
+	InstrumentAddStr17(builder, str17)
+	InstrumentAddStr18(builder, str18)
+	InstrumentAddStr19(builder, str19)
+	InstrumentAddStr20(builder, str20)
+	InstrumentAddStr21(builder, str21)
+	InstrumentAddStr22(builder, str22)
+	InstrumentAddStr23(builder, str23)
+	InstrumentAddStr24(builder, str24)
+	InstrumentAddStr25(builder, str25)
+	InstrumentAddStr26(builder, str26)
+	InstrumentAddStr27(builder, str27)
+	InstrumentAddStr28(builder, str28)
+	InstrumentAddStr29(builder, str29)
+	InstrumentAddStr30(builder, str30)
+	InstrumentAddStr31(builder, str31)
+
+	instrument := InstrumentEnd(builder)
+	builder.Finish(instrument)
+
+	return builder.FinishedBytes()
+}
+
+func (m *message) fbfSize() int {
+	return len(m.toFbf())
 }

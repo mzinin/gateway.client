@@ -18,7 +18,7 @@ func Generate(cfg *config.Config) [][][]byte {
 	if cfg.MessageType == config.Json {
 		result = convertToJson(messages, cfg.MessageSize)
 	} else {
-		// TODO implement convertion to flat buffers
+		result = convertToFbf(messages, cfg.MessageSize)
 	}
 
 	log.Printf("Done in %v\n", time.Since(start))
@@ -84,6 +84,29 @@ func convertToJson(messages [][]*message, targetSize uint16) [][][]byte {
 					message.increaseSize(uint(targetSize) - uint(currentSize))
 				}
 				result[i][j] = message.toJson()
+			}
+		}(i, bucket)
+	}
+	wg.Wait()
+
+	return result
+}
+
+func convertToFbf(messages [][]*message, targetSize uint16) [][][]byte {
+	result := make([][][]byte, len(messages))
+
+	wg := sync.WaitGroup{}
+	for i, bucket := range messages {
+		wg.Add(1)
+		go func(i int, bucket []*message) {
+			defer wg.Done()
+			result[i] = make([][]byte, len(bucket))
+			for j, message := range bucket {
+				currentSize := message.fbfSize()
+				if currentSize < int(targetSize) {
+					message.increaseSize(uint(targetSize) - uint(currentSize))
+				}
+				result[i][j] = message.toFbf()
 			}
 		}(i, bucket)
 	}
