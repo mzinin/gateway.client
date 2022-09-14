@@ -64,28 +64,22 @@ func ParseFromCommandLine() (Config, error) {
 
 func parseCommandLineKeys() {
 	// message type
-	flag.StringVar(&msgType, "t", "json", "Message type")
-	flag.StringVar(&msgType, "type", "json", "Message type")
+	flag.StringVar(&msgType, "t", "json", "Message type: json | fbf")
 
 	// message size
-	flag.UintVar(&msgSize, "s", 128, "Message size")
-	flag.UintVar(&msgSize, "size", 128, "Message size")
+	flag.UintVar(&msgSize, "s", 512, "Message size")
 
 	// number of messages
 	flag.UintVar(&requests, "n", 10000, "Number of requests to perform")
-	flag.UintVar(&requests, "number-of-requests", 10000, "Number of requests to perform")
 
 	// concurrency
 	flag.UintVar(&concurrency, "c", 1, "Number of multiple requests to make at a time")
-	flag.UintVar(&concurrency, "concurrency", 1, "Number of multiple requests to make at a time")
 
 	// keep alive flag
 	flag.BoolVar(&keepAlive, "k", false, "Use HTTP KeepAlive feature")
-	flag.BoolVar(&keepAlive, "keep-alive", false, "Use HTTP KeepAlive feature")
 
 	// gateway url
 	flag.StringVar(&gatewayURL, "u", "", "Gateway URL")
-	flag.StringVar(&gatewayURL, "gateway-url", "", "Gateway URL")
 
 	flag.Parse()
 }
