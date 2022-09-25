@@ -9,6 +9,11 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
+const (
+	numberOfStringFields = 32
+	minIncrease = 4 // flatbuffers align string size by 4, so increase string field by 4 symbols minimum
+)
+
 type message struct {
 	Int0 int64 `json:"int0"`
 	Int1 int64 `json:"int1"`
@@ -95,7 +100,7 @@ func createMessage() *message {
 		Str20:   "u",
 		Str21:   "v",
 		Str22:   "w",
-		Str23:   "z",
+		Str23:   "x",
 		Str24:   "y",
 		Str25:   "z",
 		Str26:   "A",
@@ -109,14 +114,20 @@ func createMessage() *message {
 
 func (m *message) increaseSize(delta uint) *message {
 	// prepare deltas for every string field
-	deltaPerField := make([]uint, 32)
-	minDelta := delta / 32
+	deltaPerField := make([]uint, numberOfStringFields)
+	minDelta := (delta / numberOfStringFields) - (delta / numberOfStringFields) % minIncrease
 	for i, _ := range deltaPerField {
 		deltaPerField[i] = minDelta
 		delta -= minDelta
 	}
-	for i := uint(0); i < delta; i++ {
-		deltaPerField[i] += 1
+	for i := 0; i < numberOfStringFields; i++ {
+		if delta > minIncrease {
+			deltaPerField[i] += minIncrease
+			delta -= minIncrease
+		} else {
+			deltaPerField[i] += delta
+			break
+		}
 	}
 
 	// add symbols to every string field

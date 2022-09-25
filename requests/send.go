@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	fbfType = "application/octet-stream"
 	jsonType = "application/json"
 )
 
@@ -21,13 +22,17 @@ func Send(messages [][][]byte, cfg *config.Config) (uint32, uint32) {
 	log.Printf("Sending requests\n")
 	start := time.Now()
 
-	oks, fails := sendRequests(messages, cfg.URL, cfg.KeepAlive)
+	mimeType := fbfType
+	if cfg.MessageType == config.Json {
+		mimeType = jsonType
+	}
+	oks, fails := sendRequests(messages, mimeType, cfg.URL, cfg.KeepAlive)
 
 	log.Printf("Done in %v\n", time.Since(start))
 	return oks, fails
 }
 
-func sendRequests(messages [][][]byte, url string, keepAlive bool) (uint32, uint32) {
+func sendRequests(messages [][][]byte, mimeType string, url string, keepAlive bool) (uint32, uint32) {
 	oks := uint32(0)
 	fails := uint32(0)
 
@@ -41,7 +46,7 @@ func sendRequests(messages [][][]byte, url string, keepAlive bool) (uint32, uint
 			client := http.Client{Transport: &transport}
 
 			for _, data := range bucket {
-				resp, err := client.Post(url, jsonType, bytes.NewBuffer(data))
+				resp, err := client.Post(url, mimeType, bytes.NewBuffer(data))
 				if err != nil {
 					log.Printf("Error sending POST request: %v\n", err)
 					atomic.AddUint32(&fails, uint32(1))
