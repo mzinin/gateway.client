@@ -43,7 +43,7 @@ func sendRequests(messages [][][]byte, url string, keepAlive bool) (uint32, uint
 			for _, data := range bucket {
 				resp, err := client.Post(url, jsonType, bytes.NewBuffer(data))
 				if err != nil {
-					log.Printf("Error sendint POST request: %v\n", err)
+					log.Printf("Error sending POST request: %v\n", err)
 					atomic.AddUint32(&fails, uint32(1))
 				} else {
 					defer resp.Body.Close()
