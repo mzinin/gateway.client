@@ -2,6 +2,7 @@ package requests
 
 import (
 	"gwclient/config"
+	"net"
 
 	"bytes"
 	"io"
@@ -14,8 +15,9 @@ import (
 )
 
 const (
-	fbfType = "application/octet-stream"
+	fbfType  = "application/octet-stream"
 	jsonType = "application/json"
+	timeout  = 300 * time.Second
 )
 
 func Send(messages [][][]byte, cfg *config.Config) (uint32, uint32) {
@@ -42,8 +44,17 @@ func sendRequests(messages [][][]byte, mimeType string, url string, keepAlive bo
 		go func(bucket [][]byte) {
 			defer wg.Done()
 
-			transport := http.Transport{DisableKeepAlives: !keepAlive}
-			client := http.Client{Transport: &transport}
+			transport := http.Transport{
+				DisableKeepAlives:     !keepAlive,
+				IdleConnTimeout:       timeout,
+				ResponseHeaderTimeout: timeout,
+				ExpectContinueTimeout: timeout,
+				Dial:                  (&net.Dialer{Timeout: timeout}).Dial,
+			}
+			client := http.Client{
+				Transport: &transport,
+				Timeout:   timeout,
+			}
 
 			for _, data := range bucket {
 				resp, err := client.Post(url, mimeType, bytes.NewBuffer(data))
