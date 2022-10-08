@@ -71,6 +71,8 @@ func sendRequests(messages [][][]byte, mimeType string, url string, keepAlive bo
 					}
 				}
 			}
+
+			client.CloseIdleConnections()
 		}(bucket)
 	}
 	wg.Wait()
